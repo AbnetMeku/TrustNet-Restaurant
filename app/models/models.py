@@ -14,7 +14,20 @@ class Table(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(10), unique=True, nullable=False)
     status = db.Column(db.String(20), default="available")
+    is_vip = db.Column(db.Boolean, default=False, nullable=False)
     orders = db.relationship("Order", back_populates="table")
+
+# Table to waiter relationship
+
+# class Table(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     number = db.Column(db.String(10), nullable=False)
+#     seats = db.Column(db.Integer, nullable=False)
+#     is_vip = db.Column(db.Boolean, default=False)
+    
+#     waiter_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+#     waiter = db.relationship('User', backref='tables')
+
 
 class MenuItem(db.Model):
     __tablename__ = "menu_items"

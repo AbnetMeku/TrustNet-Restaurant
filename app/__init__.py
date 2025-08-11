@@ -26,6 +26,9 @@ def create_app():
     from .routes.users.users import users_bp
     app.register_blueprint(users_bp)
 
+    # Import table routes
+    from .routes.tables.tables import tables_bp
+    app.register_blueprint(tables_bp)
 
 
     return app

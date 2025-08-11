@@ -1,5 +1,4 @@
 import os
-
 class Config:
     # Flask secret key - MUST be set in environment
     SECRET_KEY = os.environ["SECRET_KEY"]
@@ -22,3 +21,10 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
 
+class TestingConfig(Config):
+    TESTING = True
+    # Override DB_NAME with TEST_DB_NAME env variable or fallback to parent's DB_NAME
+    DB_NAME = os.environ.get("TEST_DB_NAME", Config.DB_NAME)
+    SQLALCHEMY_DATABASE_URI = (
+        f"postgresql://{Config.DB_USER}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{DB_NAME}"
+    )

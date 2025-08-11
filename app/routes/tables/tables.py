@@ -53,8 +53,9 @@ def create_table():
 @jwt_required()
 @roles_required("admin", "manager", "waiter")
 def get_table(table_id):
-    """Get table by ID."""
-    table = Table.query.get_or_404(table_id)
+    table = db.session.get(Table, table_id)
+    if not table:
+        abort(404)
     return jsonify(table_to_dict(table))
 
 # ---- UPDATE TABLE ----
@@ -62,14 +63,13 @@ def get_table(table_id):
 @jwt_required()
 @roles_required("admin", "manager")
 def update_table(table_id):
-    """Update table info. Admin and manager only."""
-    table = Table.query.get_or_404(table_id)
+    table = db.session.get(Table, table_id)
+    if not table:
+        abort(404)
     data = request.get_json()
-
     table.number = data.get("number", table.number)
     table.status = data.get("status", table.status)
     table.is_vip = data.get("is_vip", table.is_vip)
-
     db.session.commit()
     return jsonify(table_to_dict(table))
 
@@ -78,8 +78,9 @@ def update_table(table_id):
 @jwt_required()
 @roles_required("admin", "manager")
 def delete_table(table_id):
-    """Delete table. Admin and manager only."""
-    table = Table.query.get_or_404(table_id)
+    table = db.session.get(Table, table_id)
+    if not table:
+        abort(404)
     db.session.delete(table)
     db.session.commit()
     return jsonify({"message": "Table deleted"})

@@ -67,9 +67,11 @@ def get_user(user_id):
     Users can only see their own info unless admin/manager.
     """
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.get(User, current_user_id)
 
-    user = User.query.get_or_404(user_id)
+    user = db.session.get(User, user_id)
+    if user is None:
+        abort(404, description="User not found")
 
     # If not admin or manager, user can only access their own data
     if current_user.role not in ["admin", "manager"] and current_user.id != user_id:
@@ -83,7 +85,9 @@ def get_user(user_id):
 @roles_required("admin", "manager")
 def update_user(user_id):
     """Update user info (name and role). Only admin and manager can update."""
-    user = User.query.get_or_404(user_id)
+    user = db.session.get(User, user_id)
+    if user is None:
+        abort(404, description="User not found")
     data = request.get_json()
 
     user.name = data.get("name", user.name)
@@ -100,7 +104,9 @@ def update_user(user_id):
 @roles_required("admin", "manager")
 def delete_user(user_id):
     """Delete a user. Only admin and manager allowed."""
-    user = User.query.get_or_404(user_id)
+    user = db.session.get(User, user_id)
+    if user is None:
+        abort(404, description="User not found")
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted"})

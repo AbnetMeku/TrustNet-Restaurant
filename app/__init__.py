@@ -2,33 +2,37 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask import Flask
-from .config import DevelopmentConfig
+from .config import DevelopmentConfig, TestingConfig, ProductionConfig
 from .extensions import db, migrate, jwt
 
-def create_app():
+config_map = {
+    "development": DevelopmentConfig,
+    "testing": TestingConfig,
+    "production": ProductionConfig,
+}
+
+def create_app(config_name="development"):
     app = Flask(__name__)
-    app.config.from_object(DevelopmentConfig)
+    config_class = config_map.get(config_name, DevelopmentConfig)
+    app.config.from_object(config_class)
 
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    # Import models so Alembic detects them
-    from . import models  
+    
+    from . import models  # Import models so migrations see them
 
+    # Register Blueprints...
     from .routes import main_bp
     app.register_blueprint(main_bp)
-
-    # Import auth routes
+    
     from .routes.auth.auth import auth_bp
     app.register_blueprint(auth_bp)
 
-    # Import user routes
     from .routes.users.users import users_bp
     app.register_blueprint(users_bp)
 
-    # Import table routes
     from .routes.tables.tables import tables_bp
     app.register_blueprint(tables_bp)
-
 
     return app

@@ -34,5 +34,9 @@ def create_app(config_name="development"):
 
     from .routes.tables.tables import tables_bp
     app.register_blueprint(tables_bp)
+    
+    from .routes.menu_items.menu_items import menu_items_bp
+    app.register_blueprint(menu_items_bp)  
+
 
     return app

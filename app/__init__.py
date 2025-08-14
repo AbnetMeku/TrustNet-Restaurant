@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from flask import Flask
+from flask_cors import CORS
 from .config import DevelopmentConfig, TestingConfig, ProductionConfig
 from .extensions import db, migrate, jwt
 
@@ -19,9 +20,12 @@ def create_app(config_name="development"):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    
-    from . import models  # Import models so migrations see them
+    # Enable CORS for all routes (development only)
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
+    # Register models to ensure they are created in the database
+    from . import models 
+    
     # Register Blueprints...
     from .routes import main_bp
     app.register_blueprint(main_bp)

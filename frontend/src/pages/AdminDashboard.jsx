@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { FaTable, FaUserPlus, FaUtensils, FaBars, FaTimes } from "react-icons/fa";
 import "../styles/AdminDashboard.css";
-import UsersList from "../components/admin/UsersList"; // <-- import the new component
+import UsersList from "../components/admin/UsersList"; // <-- import User List compononet
+import TablesList from "../components/admin/TablesList"; // <-- import Table List component
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -85,14 +86,8 @@ export default function AdminDashboard() {
 
         <div className="content-area">
           {active === "addUser" && <UsersList />} {/* <-- render UsersList here */}
+          {active === "addTable" && <TablesList />}
 
-          {active === "addTable" && (
-            <section className="card">
-              <h2>Tables</h2>
-              <p className="muted">All Tables</p>
-              <div className="placeholder">List Table</div>
-            </section>
-          )}
 
           {active === "addMenu" && (
             <section className="card">
